@@ -22,9 +22,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npm install --no-save @sveltejs/adapter-static@^3
+      # The upstream lockfile only carries macOS native binaries (rollup/esbuild),
+      # so resolve fresh on the Linux runner instead of npm ci.
+      - run: rm -f package-lock.json && npm install --ignore-scripts --no-audit --no-fund
+      - run: npm install --no-save --ignore-scripts --no-audit --no-fund @sveltejs/adapter-static@^3
       - run: node .github/gh-pages-build.mjs
         env:
           BASE_PATH: /nostr-follow-list
